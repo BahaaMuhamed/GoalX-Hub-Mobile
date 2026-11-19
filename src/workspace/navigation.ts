@@ -128,8 +128,14 @@ export const GROUP_LABEL: Record<ScreenGroup, string> = {
   advertising: 'Advertising',
 };
 
+/** Flip to true to show the Advertising section in the mobile menu again. */
+export const SHOW_ADVERTISING_MODULE = false;
+
 export function screensFor(role: Role, hidden: ReadonlySet<string>): AppScreen[] {
-  return CATALOG.filter((item) => item.show(role) && !hidden.has(item.screen.path)).map((item) => item.screen);
+  return CATALOG.filter((item) => {
+    if (!SHOW_ADVERTISING_MODULE && (item.screen.group === 'advertising' || item.screen.path === 'settings/advertisements')) return false;
+    return item.show(role) && !hidden.has(item.screen.path);
+  }).map((item) => item.screen);
 }
 
 export function allowsScreen(role: Role, hidden: ReadonlySet<string>, path: string): boolean {

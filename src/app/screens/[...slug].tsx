@@ -1,6 +1,7 @@
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { AttendanceScreen } from '@/screens/AttendanceScreen';
 import { FinanceScreen, type FinanceSection } from '@/screens/FinanceScreen';
+import { GlobalAgentScreen } from '@/screens/GlobalAgentScreen';
 import { GroupsScreen } from '@/screens/GroupsScreen';
 import { LeaderboardScreen } from '@/screens/LeaderboardScreen';
 import { MarketplaceScreen } from '@/screens/MarketplaceScreen';
@@ -24,6 +25,7 @@ export default function ScreenRoute() {
   if (path === 'training' || path === 'my-training') return <TrainingScreen />;
   if (path === 'training/methodologies') return <MethodologiesScreen />;
   if (path === 'leaderboard') return <LeaderboardScreen />;
+  if (path === 'ai-global') return <GlobalAgentScreen />;
   if (path === 'groups') return <GroupsScreen />;
   if (path === 'attendance') return <AttendanceScreen />;
   if (path === 'scan-attendance') return <ScanAttendanceScreen />;

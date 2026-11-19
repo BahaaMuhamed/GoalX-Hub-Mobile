@@ -1,4 +1,5 @@
 import { apiRequest } from '@/api/client';
+import { mediaUrl } from '@/api/platform';
 
 export type ActivityType = {
   id: string;
@@ -65,6 +66,14 @@ export type BoardEntry = {
   playerId: string;
   name: string;
   score: number;
+};
+
+export type BoardProfile = {
+  playerId: string;
+  name: string;
+  subtitle: string;
+  jersey: string;
+  photoUrl: string | null;
 };
 
 const MANAGERS = new Set(['ADMIN', 'ORGANIZATION_ADMIN', 'SUPER_ADMIN', 'ADMINISTRATIVE']);
@@ -288,13 +297,39 @@ export async function loadLeaderboard(): Promise<BoardEntry[]> {
   const body = await apiRequest<unknown>('/leaderboard/global?limit=50', { auth: true });
   return (Array.isArray(body) ? body : []).map((item) => {
     const row = record(item);
+    const score = typeof row?.score === 'number' ? row.score : typeof row?.points === 'number' ? row.points : Number(row?.score) || 0;
     return {
       rank: typeof row?.rank === 'number' ? row.rank : 0,
       playerId: text(row?.playerId),
       name: text(row?.playerName) || text(row?.name) || 'Player',
-      score: typeof row?.score === 'number' ? row.score : typeof row?.points === 'number' ? row.points : 0,
+      score: Math.round(score),
     };
-  });
+  }).filter((item) => item.playerId);
+}
+
+/** Same roster call the website uses to attach a photo, group, and position to each rank. */
+export async function loadLeaderboardProfiles(organizationId: string): Promise<BoardProfile[]> {
+  if (!organizationId) return [];
+  try {
+    const body = await apiRequest<unknown>(`/players?organizationId=${encodeURIComponent(organizationId)}`, { auth: true });
+    return (Array.isArray(body) ? body : []).map((item) => {
+      const row = record(item);
+      const user = record(row?.user);
+      const group = record(row?.group);
+      const team = record(row?.team);
+      const playerId = text(row?.id);
+      const subtitle = text(row?.groupName) || text(group?.name) || text(row?.position) || text(team?.name);
+      return {
+        playerId,
+        name: text(row?.fullName) || text(user?.fullName) || text(row?.name),
+        subtitle,
+        jersey: text(row?.jerseyNumber),
+        photoUrl: mediaUrl(text(row?.photoUrl) || text(row?.avatarUrl) || text(user?.photoUrl) || text(user?.avatarUrl)),
+      };
+    }).filter((item) => item.playerId);
+  } catch {
+    return [];
+  }
 }
 
 export function qrImageUrl(payload: string): string {

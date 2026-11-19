@@ -62,6 +62,32 @@ export async function listNotices(): Promise<NoticeCard[]> {
   return rows.map(mapNotice).filter((item): item is NoticeCard => item !== null);
 }
 
+export type NoticeBar = {
+  ending: number;
+  waiting: number;
+  announcements: number;
+};
+
+/** Same inbox the website notice bar reads from `GET /notifications/me`. */
+export async function loadNoticeBar(): Promise<NoticeBar> {
+  try {
+    const rows = await readList('/notifications/me').catch(() => readList('/notifications'));
+    let ending = 0;
+    let waiting = 0;
+    let announcements = 0;
+    for (const row of rows) {
+      const kind = (text(row.type) || text(row.kind)).toUpperCase();
+      const status = text(row.status).toUpperCase();
+      if (kind === 'SUBSCRIPTION_ENDING') ending += 1;
+      else if (kind === 'ANNOUNCEMENT') announcements += 1;
+      else if (kind === 'REGISTRATION_REQUEST' && (!status || status === 'PENDING')) waiting += 1;
+    }
+    return { ending, waiting, announcements };
+  } catch {
+    return { ending: 0, waiting: 0, announcements: 0 };
+  }
+}
+
 async function readList(path: string): Promise<Record<string, unknown>[]> {
   const raw = await apiRequest<unknown>(path, { auth: true });
   return asRows(raw);
