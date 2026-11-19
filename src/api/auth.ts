@@ -19,3 +19,10 @@ export function logout(refreshToken: string): Promise<void> {
     body: { refreshToken },
   });
 }
+
+export function forgotPassword(identity: string): Promise<void> {
+  return apiRequest<void>('/auth/forgot-password', {
+    method: 'POST',
+    body: { username: identity, email: identity },
+  });
+}

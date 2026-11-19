@@ -5,6 +5,7 @@ import type { Profile } from '@/api/types';
 const ACCESS = 'goalx.access';
 const REFRESH = 'goalx.refresh';
 const PROFILE = 'goalx.profile';
+const LOCALE = 'goalx.locale';
 
 const memory = new Map<string, string>();
 
@@ -83,4 +84,13 @@ export async function getProfile(): Promise<Profile | null> {
 
 export async function clearSession(): Promise<void> {
   await Promise.all([remove(ACCESS), remove(REFRESH), remove(PROFILE)]);
+}
+
+export async function getLocale(): Promise<'en' | 'ar' | null> {
+  const value = await read(LOCALE);
+  return value === 'ar' || value === 'en' ? value : null;
+}
+
+export async function saveLocale(locale: 'en' | 'ar'): Promise<void> {
+  await write(LOCALE, locale);
 }

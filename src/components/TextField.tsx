@@ -9,8 +9,9 @@ type TextFieldProps = {
   secureTextEntry?: boolean;
   autoCapitalize?: 'none' | 'words' | 'sentences';
   keyboardType?: KeyboardTypeOptions;
-  autoComplete?: 'username' | 'email' | 'password' | 'name' | 'off';
+  autoComplete?: 'username' | 'email' | 'password' | 'name' | 'tel' | 'off';
   error?: string;
+  align?: 'left' | 'right';
 };
 
 export function TextField({
@@ -23,10 +24,11 @@ export function TextField({
   keyboardType = 'default',
   autoComplete = 'off',
   error,
+  align = 'left',
 }: TextFieldProps) {
   return (
     <View style={styles.wrap}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { textAlign: align }]}>{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -37,9 +39,9 @@ export function TextField({
         autoCorrect={false}
         keyboardType={keyboardType}
         autoComplete={autoComplete}
-        style={[styles.input, error ? styles.inputError : null]}
+        style={[styles.input, { textAlign: align, writingDirection: align === 'right' ? 'rtl' : 'ltr' }, error ? styles.inputError : null]}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <Text style={[styles.error, { textAlign: align }]}>{error}</Text> : null}
     </View>
   );
 }

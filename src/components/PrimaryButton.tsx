@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
 import { colors, spacing } from '@/theme';
 
 type PrimaryButtonProps = {
@@ -6,16 +6,17 @@ type PrimaryButtonProps = {
   onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
-export function PrimaryButton({ label, onPress, loading = false, disabled = false }: PrimaryButtonProps) {
+export function PrimaryButton({ label, onPress, loading = false, disabled = false, style }: PrimaryButtonProps) {
   const inactive = disabled || loading;
   return (
     <Pressable
       accessibilityRole="button"
       disabled={inactive}
       onPress={onPress}
-      style={({ pressed }) => [styles.button, inactive && styles.inactive, pressed && !inactive && styles.pressed]}
+      style={({ pressed }) => [styles.button, style, inactive && styles.inactive, pressed && !inactive && styles.pressed]}
     >
       {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.label}>{label}</Text>}
     </Pressable>

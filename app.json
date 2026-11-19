@@ -37,7 +37,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#071018",
+          "backgroundColor": "#07140c",
           "image": "./assets/splash-icon.png",
           "imageWidth": 180,
           "resizeMode": "contain"
@@ -49,6 +49,20 @@
           "android": {
             "usesCleartextTraffic": true
           }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow GoalX Hub to use the camera to scan attendance QR codes.",
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow GoalX Hub to use your location so employee attendance is recorded at the branch."
         }
       ]
     ],

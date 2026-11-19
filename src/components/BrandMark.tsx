@@ -1,51 +1,42 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { colors } from '@/theme';
+import { Image, StyleSheet, type ImageSourcePropType } from 'react-native';
+import { platformLogo, sharedPicture } from '@/shared/media';
 
 type BrandMarkProps = {
   size?: number;
+  uri?: string | null;
+  layout?: 'square' | 'wide';
 };
 
-export function BrandMark({ size = 84 }: BrandMarkProps) {
+const WIDE_RATIO = 598 / 970;
+
+export function BrandMark({ size = 84, uri, layout = 'square' }: BrandMarkProps) {
+  const local = sharedPicture(uri);
+  const remote: ImageSourcePropType | null = uri && /^(https?:|data:)/i.test(uri) ? { uri } : null;
+  const source = local ?? remote ?? platformLogo;
+  const wide = layout === 'wide' && source === platformLogo;
+  const academy = source !== platformLogo;
   return (
-    <View
+    <Image
+      accessibilityLabel={academy ? 'Academy logo' : 'GolaX Hub'}
+      resizeMode={academy || wide ? 'contain' : 'cover'}
+      source={source}
       style={[
-        styles.mark,
-        {
-          width: size,
-          height: size,
-          borderRadius: size * 0.28,
-        },
+        styles.logo,
+        wide
+          ? { width: size, height: size * WIDE_RATIO, borderRadius: 0, backgroundColor: 'transparent' }
+          : {
+              width: size,
+              height: size,
+              borderRadius: academy ? 16 : size * 0.22,
+              backgroundColor: academy ? '#ffffff' : '#102033',
+            },
       ]}
-    >
-      <View
-        style={[
-          styles.ring,
-          {
-            width: size * 0.72,
-            height: size * 0.72,
-            borderRadius: size * 0.36,
-            borderWidth: Math.max(2, size * 0.035),
-          },
-        ]}
-      />
-      <Text style={[styles.letters, { fontSize: size * 0.3 }]}>GX</Text>
-    </View>
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  mark: {
-    backgroundColor: colors.green,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ring: {
-    position: 'absolute',
-    borderColor: colors.gold,
-  },
-  letters: {
-    color: colors.white,
-    fontWeight: '800',
-    letterSpacing: 1,
+  logo: {
+    backgroundColor: '#102033',
   },
 });

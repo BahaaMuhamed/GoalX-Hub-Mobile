@@ -4,7 +4,7 @@ import type { ApiErrorBody, AuthResponse } from '@/api/types';
 import { clearSession, getAccessToken, getRefreshToken, saveTokens } from '@/auth/storage';
 
 type RequestOptions = {
-  method?: 'GET' | 'POST';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: unknown;
   auth?: boolean;
   retry?: boolean;
